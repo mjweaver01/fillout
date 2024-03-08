@@ -29,8 +29,6 @@ app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
   const url = `https://api.fillout.com/v1/api/forms/${formId}/submissions`
   const headers = { 'content-type': 'application/json', Authorization: `Bearer ${API_KEY}` }
 
-  console.log(url, headers)
-
   fetch(url, { headers })
     .then((response) => response.json())
     .then(async (response) => {
