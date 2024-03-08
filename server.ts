@@ -8,6 +8,22 @@ type FilterClauseType = {
   value: number | string
 }
 
+const compare = (left, comparison, right) => {
+  if (!left || !comparison || !right) return
+
+  if (comparison === 'equals') {
+    return left == right
+  } else if (comparison === 'does_not_equal') {
+    return left != right
+  } else if (comparison === 'greater_than') {
+    return left >= right
+  } else if (comparison === 'less_than') {
+    return left < right
+  }
+
+  return false
+}
+
 type ResponseFiltersType = ResponseFilter[]
 
 const app = express()
