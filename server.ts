@@ -8,6 +8,8 @@ type FilterClauseType = {
   value: number | string
 }
 
+type ResponseFiltersType = ResponseFilter[]
+
 const compare = (left, comparison, right) => {
   if (!left || !comparison || !right) return
 
@@ -23,8 +25,6 @@ const compare = (left, comparison, right) => {
 
   return false
 }
-
-type ResponseFiltersType = ResponseFilter[]
 
 const app = express()
 const appName = chalk.hex('#1877f2')('[fillout] ')
@@ -48,7 +48,10 @@ app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
   fetch(url, { headers })
     .then((response) => response.json())
     .then(async (response) => {
-      // @TODO this is where we do the logic/filtering
+      if (response.responses) {
+        // @TODO this is where we do the logic/filtering
+        response.responses = response.responses.map((r) => r)
+      }
       res.json(response)
     })
     .catch((err) => {
