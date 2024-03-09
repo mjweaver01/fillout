@@ -1,17 +1,19 @@
-import express, { Request, Response } from 'express'
+import express, { Request, RequestHandler, Response } from 'express'
 import * as dotenv from 'dotenv'
 import chalk from 'chalk'
 import data from './data.json'
 
+type Condition = 'equals' | 'does_not_equal' | 'greater_than' | 'less_than'
+
 type FilterClauseType = {
   id: string
-  condition: 'equals' | 'does_not_equal' | 'greater_than' | 'less_than'
+  condition: Condition
   value: number | string
 }
 
-type ResponseFiltersType = ResponseFilter[]
+type ResponseFiltersType = FilterClauseType[]
 
-const compare = (left, comparison, right) => {
+const compare = (left: any, comparison: Condition, right: any) => {
   if (!left || !comparison || !right) return
 
   if (comparison === 'equals') {
@@ -32,7 +34,7 @@ const appName = chalk.hex('#1877f2')('[fillout] ')
 app.use(express.json())
 
 dotenv.config()
-const { NODE_ENV, CLIENT_ID, API_KEY } = process.env
+const { NODE_ENV, API_KEY } = process.env
 const isProd = NODE_ENV === 'production'
 const port = isProd ? 80 : 3000
 
@@ -49,15 +51,16 @@ app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
   }
 
   const formId = req.params.formId
+  const filters = JSON.parse('') as ResponseFiltersType
   const url = `https://api.fillout.com/v1/api/forms/${formId}/submissions`
   const headers = { 'content-type': 'application/json', Authorization: `Bearer ${API_KEY}` }
 
   fetch(url, { headers })
     .then((response) => response.json())
-    .then(async (response) => {
+    .then(async (response: { responses: any[] } | any) => {
       if (response.responses) {
         // @TODO this is where we do the logic/filtering
-        response.responses = response.responses.map((r) => r)
+        response.responses = response.responses.map((r: any) => r)
       }
       res.json(response)
     })
