@@ -1,19 +1,47 @@
-import express, { Request, RequestHandler, Response } from 'express'
+import express, { Request, Response } from 'express'
 import * as dotenv from 'dotenv'
 import chalk from 'chalk'
-import data from './data.json'
+import data from './demo_data.json'
+
+type AnswerTypes =
+  | 'LongAnswer'
+  | 'ShortAnswer'
+  | 'DatePicker'
+  | 'NumberInput'
+  | 'MultipleChoice'
+  | 'EmailInput'
 
 type Condition = 'equals' | 'does_not_equal' | 'greater_than' | 'less_than'
 
-type FilterClauseType = {
+interface Question {
+  id: string
+  name: string
+  type: AnswerTypes
+  value: string | number
+}
+
+interface Submission {
+  submissionId: string
+  submissionTime: string
+  lastUpdatedAt: string
+  questions: Question[]
+  calculations: any[]
+  urlParameters: any[]
+  quiz: any
+  documents: any[]
+}
+
+type Submissions = Submission[]
+
+interface FilterClause {
   id: string
   condition: Condition
   value: number | string
 }
 
-type ResponseFiltersType = FilterClauseType[]
+type ResponseFilters = FilterClause[]
 
-const compare = (left: any, comparison: Condition, right: any) => {
+const compare = (left: string | number, comparison: Condition, right: string | number) => {
   if (!left || !comparison || !right) return
 
   if (comparison === 'equals') {
@@ -27,6 +55,18 @@ const compare = (left: any, comparison: Condition, right: any) => {
   }
 
   return false
+}
+
+const filterResponses = async (
+  res: Response,
+  submissions: Submissions,
+  filters: ResponseFilters,
+) => {
+  let filteredSubmissions = submissions.map((s) => s)
+
+  console.log(filters)
+
+  res.json(filteredSubmissions)
 }
 
 const app = express()
@@ -51,19 +91,13 @@ app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
   }
 
   const formId = req.params.formId
-  const filters = JSON.parse('') as ResponseFiltersType
+  const filters = JSON.parse('') as ResponseFilters
   const url = `https://api.fillout.com/v1/api/forms/${formId}/submissions`
   const headers = { 'content-type': 'application/json', Authorization: `Bearer ${API_KEY}` }
 
   fetch(url, { headers })
     .then((response) => response.json())
-    .then(async (response: { responses: any[] } | any) => {
-      if (response.responses) {
-        // @TODO this is where we do the logic/filtering
-        response.responses = response.responses.map((r: any) => r)
-      }
-      res.json(response)
-    })
+    .then((r: any) => filterResponses(res, r.responses, filters))
     .catch((err) => {
       console.log(err)
       res.json(err)
