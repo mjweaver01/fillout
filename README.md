@@ -63,7 +63,7 @@ curl http://localhost:3000/cLZojxk94ous/filteredResponses?filters=%5B%7B%22id%22
 
 ### Two Filters; One Result
 
-[2for1 Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=%5B%7B%22id%22:%22shortAnswer%22,%22condition%22:%22equals%22,%22value%22:%22Johnny%22%7D%5D)
+[1for2 Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"ShortAnswer","condition":"equals","value":"Test"}])
 
 #### Payload
 
@@ -82,4 +82,27 @@ curl http://localhost:3000/cLZojxk94ous/filteredResponses?filters=%5B%7B%22id%22
 ]
 ```
 
-[Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=%5B%7B%22id%22%3A%22shortAnswer%22%2C%22condition%22%3A%22equals%22%2C%22value%22%3A%22Test%22%7D%2C%7B%22id%22%3A%22DatePicker%22%2C%22condition%22%3A%22greater_than%22%2C%22value%22%3A%222024-02-29%22%7D%5D)
+[Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"ShortAnswer","condition":"equals","value":"Test"},{"id":"DatePicker","condition":"greater_than","value":"2024-01-01"}])
+
+### Two Filters; Three Results
+
+[3for2 Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"ShortAnswer","condition":"equals","value":"Test"}])
+
+#### Payload
+
+```json
+[
+  {
+    "id": "DatePicker",
+    "condition": "less_than",
+    "value": "2024-03-01"
+  },
+  {
+    "id": "DatePicker",
+    "condition": "greater_than",
+    "value": "2024-01-01"
+  }
+]
+```
+
+[Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"DatePicker","condition":"less_than","value":"2024-03-01"},{"id":"DatePicker","condition":"greater_than","value":"2024-01-01"}])
