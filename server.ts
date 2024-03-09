@@ -3,49 +3,6 @@ import * as dotenv from 'dotenv'
 import chalk from 'chalk'
 import data from './demo_data.json'
 
-type AnswerTypes =
-  | 'LongAnswer'
-  | 'ShortAnswer'
-  | 'DatePicker'
-  | 'NumberInput'
-  | 'MultipleChoice'
-  | 'EmailInput'
-
-type Condition = 'equals' | 'does_not_equal' | 'greater_than' | 'less_than'
-
-interface Question {
-  id: string
-  name: string
-  type: AnswerTypes
-  value: string | number
-}
-
-interface Submission {
-  submissionId: string
-  submissionTime: string
-  lastUpdatedAt: string
-  questions: Question[]
-  calculations: any[]
-  urlParameters: any[]
-  quiz: any
-  documents: any[]
-}
-
-type Submissions = Submission[]
-interface FilterClause {
-  id: string
-  condition: Condition
-  value: number | string
-}
-
-type ResponseFilters = FilterClause[]
-
-type FilteredSubmissionsResponse = {
-  responses: Submissions
-  totalResponses: number
-  pageCount: number
-}
-
 const demoData: FilteredSubmissionsResponse = JSON.parse(JSON.stringify(data))
 
 const compareValues = (left: string | number, comparison: Condition, right: string | number) => {
@@ -68,9 +25,10 @@ const filterResponses = (submissions: Submissions, query: any) => {
   try {
     const parsedFilters = JSON.parse(query.filters) as ResponseFilters
     console.log(
-      chalk.green(
-        `Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
-      ),
+      appName +
+        chalk.green(
+          `🔍 Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
+        ),
     )
     if (parsedFilters.length) {
       let filteredSubmissions = submissions
@@ -92,16 +50,18 @@ const filterResponses = (submissions: Submissions, query: any) => {
         .filter((v) => v)
 
       console.log(
-        chalk.green(
-          `Filtered down to ${filteredSubmissions.length} record${filteredSubmissions.length != 1 ? 's' : ''}`,
-        ),
+        appName +
+          chalk.green(
+            `🔍 Filtered down to ${filteredSubmissions.length} record${filteredSubmissions.length != 1 ? 's' : ''}`,
+          ),
       )
       return filteredSubmissions
     } else {
       console.log(
-        chalk.green(
-          `No filters; returning ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
-        ),
+        appName +
+          chalk.green(
+            `🔍 No filters; returning ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
+          ),
       )
       return submissions
     }
@@ -158,11 +118,11 @@ app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
 })
 
 app.listen(port, () => {
-  console.log(appName + chalk.green(`👂 listening http://localhost:${port}`))
-
   if (API_KEY) {
     console.log(appName + chalk.yellow('🔑 API key present'))
   } else {
     console.log(chalk.red('🛑 please provide required .env data'))
   }
+
+  console.log(appName + chalk.green(`👂 listening http://localhost:${port}`))
 })
