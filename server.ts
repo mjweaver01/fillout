@@ -32,7 +32,6 @@ interface Submission {
 }
 
 type Submissions = Submission[]
-
 interface FilterClause {
   id: string
   condition: Condition
@@ -41,7 +40,15 @@ interface FilterClause {
 
 type ResponseFilters = FilterClause[]
 
-const compare = (left: string | number, comparison: Condition, right: string | number) => {
+type FilteredSubmissionsResponse = {
+  responses: Submissions
+  totalResponses: number
+  pageCount: number
+}
+
+const demoData: FilteredSubmissionsResponse = JSON.parse(JSON.stringify(data))
+
+const compareValues = (left: string | number, comparison: Condition, right: string | number) => {
   if (!left || !comparison || !right) return
 
   if (comparison === 'equals') {
@@ -57,16 +64,52 @@ const compare = (left: string | number, comparison: Condition, right: string | n
   return false
 }
 
-const filterResponses = async (
-  res: Response,
-  submissions: Submissions,
-  filters: ResponseFilters,
-) => {
-  let filteredSubmissions = submissions.map((s) => s)
+const filterResponses = (submissions: Submissions, query: any) => {
+  try {
+    const parsedFilters = JSON.parse(query.filters) as ResponseFilters
+    console.log(
+      chalk.green(
+        `Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
+      ),
+    )
+    if (parsedFilters.length) {
+      let filteredSubmissions = submissions
+        .map((submission) => {
+          let filteredQuestions = submission.questions
+            .map((question) => {
+              let filterChecks = parsedFilters
+                .map((f) => {
+                  return compareValues(question.value, f.condition, f.value) ? f : null
+                })
+                .filter((v) => v)
 
-  console.log(filters)
+              return filterChecks.length == parsedFilters.length ? question : null
+            })
+            .filter((v) => v)
 
-  res.json(filteredSubmissions)
+          return filteredQuestions.length >= parsedFilters.length ? submission : null
+        })
+        .filter((v) => v)
+
+      console.log(
+        chalk.green(
+          `Filtered down to ${filteredSubmissions.length} record${filteredSubmissions.length != 1 ? 's' : ''}`,
+        ),
+      )
+      return filteredSubmissions
+    } else {
+      console.log(
+        chalk.green(
+          `No filters; returning ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
+        ),
+      )
+      return submissions
+    }
+  } catch (e) {
+    console.error(e)
+  }
+
+  return submissions
 }
 
 const app = express()
@@ -85,19 +128,29 @@ app.get('/ping', (req: Request, res: Response) => {
 })
 
 app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
+  const formId = req.params.formId
+  const query = req.query
   if (!isProd) {
-    res.json(data)
-    return
+    const filteredResponses = filterResponses(demoData.responses as Submissions, query)
+    return res.json({
+      responses: filteredResponses,
+      totalResponses: filteredResponses.length,
+      pageCount: 1,
+    })
   }
 
-  const formId = req.params.formId
-  const filters = JSON.parse('') as ResponseFilters
   const url = `https://api.fillout.com/v1/api/forms/${formId}/submissions`
   const headers = { 'content-type': 'application/json', Authorization: `Bearer ${API_KEY}` }
-
   fetch(url, { headers })
     .then((response) => response.json())
-    .then((r: any) => filterResponses(res, r.responses, filters))
+    .then((r: any) => {
+      const filteredResponses = filterResponses(r.responses, query)
+      res.json({
+        responses: filteredResponses,
+        totalResponses: filteredResponses.length,
+        pageCount: 1,
+      })
+    })
     .catch((err) => {
       console.log(err)
       res.json(err)
