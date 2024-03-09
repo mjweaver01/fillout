@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express'
 import * as dotenv from 'dotenv'
 import chalk from 'chalk'
+import data from './data.json'
 
 type FilterClauseType = {
   id: string
@@ -32,7 +33,8 @@ app.use(express.json())
 
 dotenv.config()
 const { NODE_ENV, CLIENT_ID, API_KEY } = process.env
-const port = NODE_ENV === 'production' ? 80 : 3000
+const isProd = NODE_ENV === 'production'
+const port = isProd ? 80 : 3000
 
 app.get('/ping', (req: Request, res: Response) => {
   res.json({
@@ -41,6 +43,11 @@ app.get('/ping', (req: Request, res: Response) => {
 })
 
 app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
+  if (!isProd) {
+    res.json(data)
+    return
+  }
+
   const formId = req.params.formId
   const url = `https://api.fillout.com/v1/api/forms/${formId}/submissions`
   const headers = { 'content-type': 'application/json', Authorization: `Bearer ${API_KEY}` }
@@ -61,11 +68,11 @@ app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
 })
 
 app.listen(port, () => {
-  console.log(appName + chalk.green(`🐳 listening http://localhost:${port}`))
+  console.log(appName + chalk.green(`👂 listening http://localhost:${port}`))
 
   if (API_KEY) {
     console.log(appName + chalk.yellow('🔑 API key present'))
   } else {
-    chalk.red('🛑 please provide required .env data')
+    console.log(chalk.red('🛑 please provide required .env data'))
   }
 })
