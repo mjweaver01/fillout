@@ -76,7 +76,7 @@ export const filterResponses = (submissions: Submissions, query: any) => {
             // wanted to check both KVs (id and type) just incase :)
             (id === question.id || id === question.type) &&
             // type coercion here vs above
-            compareValues(question.value.toString(), condition, value.toString())
+            compareValues(question.value?.toString(), condition, value?.toString())
           )
         })
       })
