@@ -40,7 +40,7 @@ const filterResponses = (submissions: Submissions, query: any) => {
     const parsedFilters = JSON.parse(query.filters) as ResponseFilters
     console.log(
       appName +
-        chalk.green(
+        chalk.blue(
           `🔍 Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
         ),
     )
@@ -71,7 +71,7 @@ const filterResponses = (submissions: Submissions, query: any) => {
 
       console.log(
         appName +
-          chalk.green(
+          chalk.blue(
             `🔍 Filtered down to ${filteredSubmissions.length} record${filteredSubmissions.length != 1 ? 's' : ''}`,
           ),
       )
@@ -79,7 +79,7 @@ const filterResponses = (submissions: Submissions, query: any) => {
     } else {
       console.log(
         appName +
-          chalk.green(
+          chalk.blue(
             `🔍 No filters; returning ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
           ),
       )
@@ -93,7 +93,7 @@ const filterResponses = (submissions: Submissions, query: any) => {
 }
 
 const app = express()
-const appName = chalk.hex('#1877f2')('[fillout] ')
+const appName = chalk.hex('#ec4899')('[fillout] ')
 app.use(express.json())
 
 dotenv.config()
