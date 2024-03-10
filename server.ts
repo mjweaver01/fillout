@@ -36,17 +36,25 @@ const compareValues = (left: string | number, comparison: Condition, right: stri
 }
 
 const filterResponses = (submissions: Submissions, query: any) => {
-  const noQuery = () => {
+  const returnAll = (isError = false) => {
+    if (isError) {
+      console.log(
+        appName + chalk.red(`🚨 Something went wrong while filtering! Check the error above 👆`),
+      )
+    } else {
+      console.log(appName + chalk.magenta('🙅 No filters!'))
+    }
+
     console.log(
       appName +
-        chalk.blue(
-          `🙅 No filters; returning all ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
+        chalk.magenta(
+          `🪃  Returning all ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
         ),
     )
     return submissions
   }
 
-  if (!query || !query.filters) return noQuery()
+  if (!query || !query.filters) return returnAll()
 
   try {
     const parsedFilters = JSON.parse(query.filters) as ResponseFilters
@@ -56,7 +64,7 @@ const filterResponses = (submissions: Submissions, query: any) => {
           `🧐 Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
         ),
     )
-    if (parsedFilters.length > 0) {
+    if (parsedFilters.length > 0 && Array.isArray(parsedFilters)) {
       let filteredSubmissions = submissions
         .map((submission) => {
           let matchedFilters = parsedFilters
@@ -89,13 +97,12 @@ const filterResponses = (submissions: Submissions, query: any) => {
       )
       return filteredSubmissions
     } else {
-      return noQuery()
+      return returnAll()
     }
   } catch (e) {
     console.error(e)
+    return returnAll(true)
   }
-
-  return submissions
 }
 
 const app = express()
