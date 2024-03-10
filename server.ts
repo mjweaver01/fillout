@@ -40,7 +40,7 @@ const filterResponses = (submissions: Submissions, query: any) => {
     console.log(
       appName +
         chalk.blue(
-          `🔍 No filters; returning ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
+          `🙅 No filters; returning all ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
         ),
     )
     return submissions
@@ -53,7 +53,7 @@ const filterResponses = (submissions: Submissions, query: any) => {
     console.log(
       appName +
         chalk.blue(
-          `🔍 Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
+          `🧐 Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
         ),
     )
     if (parsedFilters.length > 0) {
@@ -83,8 +83,8 @@ const filterResponses = (submissions: Submissions, query: any) => {
 
       console.log(
         appName +
-          chalk.blue(
-            `🔍 Filtered down to ${filteredSubmissions.length} record${filteredSubmissions.length != 1 ? 's' : ''}`,
+          chalk.magenta(
+            `✅ Filtered down to ${filteredSubmissions.length} record${filteredSubmissions.length != 1 ? 's' : ''}`,
           ),
       )
       return filteredSubmissions
