@@ -66,29 +66,18 @@ export const filterResponses = (submissions: Submissions, query: any) => {
         ),
     )
     if (Array.isArray(parsedFilters) && parsedFilters.length > 0) {
-      const filteredSubmissions = submissions
-        .map((submission) => {
-          const matchedFilters = parsedFilters
-            .map((filter) => {
-              const matchedQuestions = submission.questions
-                .map((question) => {
-                  if (filter.id === question.id || filter.id === question.type) {
-                    if (compareValues(question.value, filter.condition, filter.value)) {
-                      return question
-                    }
-                  }
-
-                  return null
-                })
-                .filter((q) => q)
-
-              return matchedQuestions.length > 0
-            })
-            .filter((f) => f)
-
-          return matchedFilters.length === parsedFilters.length ? submission : null
+      const filteredSubmissions = submissions.filter((submission) => {
+        // every() to ensure that all filters are matched for a submission
+        return parsedFilters.every((filter) => {
+          // some() to check if any question matches a filter within a submission
+          return submission.questions.some((question) => {
+            return (
+              (filter.id === question.id || filter.id === question.type) &&
+              compareValues(question.value, filter.condition, filter.value)
+            )
+          })
         })
-        .filter((s) => s)
+      })
 
       console.log(
         APP_NAME +
