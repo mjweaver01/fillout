@@ -1,3 +1,4 @@
+import { appName } from './constants'
 import chalk from 'chalk'
 
 export const isDate = (date: string | number) => {
