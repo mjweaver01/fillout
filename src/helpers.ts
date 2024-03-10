@@ -68,15 +68,17 @@ export const filterResponses = (submissions: Submissions, query: any) => {
           `🧐 Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
         ),
     )
-
     if (!Array.isArray(parsedFilters) || parsedFilters.length === 0) return returnAll()
 
     const filteredSubmissions = submissions.filter((submission) => {
+      // every() to ensure that all filters are matched for a submission
       return parsedFilters.every((filter) => {
         const { id, value, condition } = filter
 
+        // some() to check if any question matches a filter within a submission
         return submission.questions.some((question) => {
           return (
+            // wanted to check both KVs (id and type) just incase :)
             (id === question.id || id === question.type) &&
             compareValues(question.value, condition, value)
           )
