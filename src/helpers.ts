@@ -27,25 +27,28 @@ export const compareValues = (
       ? parseInt(right.toString())
       : right
 
-  if (comparison === 'equals') return l == r
-  if (comparison === 'does_not_equal') return l != r
-  if (comparison === 'greater_than') return l > r
-  if (comparison === 'less_than') return l < r
-
-  return false
+  switch (comparison) {
+    case 'equals':
+      return l === r
+    case 'does_not_equal':
+      return l !== r
+    case 'greater_than':
+      return l > r
+    case 'less_than':
+      return l < r
+    default:
+      return false
+  }
 }
 
-// this is where the 🪄 happens
 export const filterResponses = (submissions: Submissions, query: any) => {
   const returnAll = (isError = false) => {
-    if (isError) {
-      console.log(
-        APP_NAME + chalk.red(`🚨 Something went wrong while filtering! Check the error above 👆`),
-      )
-    } else {
-      console.log(APP_NAME + chalk.magenta('🙅 No filters!'))
-    }
-
+    console.log(
+      APP_NAME +
+        (isError
+          ? chalk.red(`🚨 Something went wrong while filtering! Check the error above 👆`)
+          : chalk.magenta('🙅 No filters!')),
+    )
     console.log(
       APP_NAME +
         chalk.magenta(
@@ -55,7 +58,7 @@ export const filterResponses = (submissions: Submissions, query: any) => {
     return submissions
   }
 
-  if (!query || !query.filters) return returnAll()
+  if (!query || !query.filters || submissions.length === 0) return returnAll()
 
   try {
     const parsedFilters = JSON.parse(query.filters) as ResponseFilters
@@ -65,31 +68,30 @@ export const filterResponses = (submissions: Submissions, query: any) => {
           `🧐 Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
         ),
     )
-    if (Array.isArray(parsedFilters) && parsedFilters.length > 0) {
-      const filteredSubmissions = submissions.filter((submission) => {
-        // every() to ensure that all filters are matched for a submission
-        return parsedFilters.every((filter) => {
-          // some() to check if any question matches a filter within a submission
-          return submission.questions.some((question) => {
-            return (
-              // wanted to account for both KVs here
-              (filter.id === question.id || filter.id === question.type) &&
-              compareValues(question.value, filter.condition, filter.value)
-            )
-          })
+
+    if (!Array.isArray(parsedFilters) || parsedFilters.length === 0) return returnAll()
+
+    const filteredSubmissions = submissions.filter((submission) => {
+      return parsedFilters.every((filter) => {
+        const { id, value, condition } = filter
+
+        return submission.questions.some((question) => {
+          return (
+            (id === question.id || id === question.type) &&
+            compareValues(question.value, condition, value)
+          )
         })
       })
+    })
 
-      console.log(
-        APP_NAME +
-          chalk.magenta(
-            `✅ Filtered down to ${filteredSubmissions.length} record${filteredSubmissions.length != 1 ? 's' : ''}`,
-          ),
-      )
-      return filteredSubmissions
-    } else {
-      return returnAll()
-    }
+    console.log(
+      APP_NAME +
+        chalk.magenta(
+          `✅ Filtered down to ${filteredSubmissions.length} record${filteredSubmissions.length != 1 ? 's' : ''}`,
+        ),
+    )
+
+    return filteredSubmissions
   } catch (e) {
     console.error(e)
     return returnAll(true)
