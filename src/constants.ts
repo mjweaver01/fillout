@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import * as dotenv from 'dotenv'
-import data from '../demo_data.json'
+import data from './_demo_data.json'
 
 export const demoData: FilteredSubmissionsResponse = JSON.parse(JSON.stringify(data))
 
