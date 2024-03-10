@@ -36,6 +36,18 @@ const compareValues = (left: string | number, comparison: Condition, right: stri
 }
 
 const filterResponses = (submissions: Submissions, query: any) => {
+  const noQuery = () => {
+    console.log(
+      appName +
+        chalk.blue(
+          `🔍 No filters; returning ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
+        ),
+    )
+    return submissions
+  }
+
+  if (!query || Object.keys(query.length <= 0)) return noQuery()
+
   try {
     const parsedFilters = JSON.parse(query.filters) as ResponseFilters
     console.log(
@@ -77,13 +89,7 @@ const filterResponses = (submissions: Submissions, query: any) => {
       )
       return filteredSubmissions
     } else {
-      console.log(
-        appName +
-          chalk.blue(
-            `🔍 No filters; returning ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
-          ),
-      )
-      return submissions
+      return noQuery()
     }
   } catch (e) {
     console.error(e)
