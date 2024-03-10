@@ -37,58 +37,25 @@ yarn docker:compose
 - Query parameters: same as our [responses endpoint](https://www.fillout.com/help/fillout-rest-api#d8b24260dddd4aaa955f85e54f4ddb4d), except for a new `filters` parameter (JSON stringified):
 
 ```bash
-# demo localhost request
-curl http://localhost:3000/cLZojxk94ous/filteredResponses?filters=%5B%7B%22id%22:%22shortAnswer%22,%22condition%22:%22equals%22,%22value%22:%22Test%22%7D%5D
+# test localhost curl request
+curl http://localhost:3000/cLZojxk94ous/filteredResponses?filters=%5B%7B%22id%22:%22ShortAnswer%22,%22condition%22:%22equals%22,%22value%22:%22Test%22%7D%5D
 ```
 
-## Demo scenarios:
+## 🧪 Demo scenarios:
 
-### One Filter; One Result
-
-[1for1 Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=%5B%7B%22id%22:%22shortAnswer%22,%22condition%22:%22equals%22,%22value%22:%22Johnny%22%7D%5D)
-
-#### Payload
+### [One Filter; One Result](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"ShortAnswer","condition":"equals","value":"Johnny"}])
 
 ```json
 [
   {
-    "id": "shortAnswer",
+    "id": "ShortAnswer",
     "condition": "equals",
     "value": "Johnny"
   }
 ]
 ```
 
-## Demo scenarios:
-
-### Two Filters; One Result
-
-[1for2 Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"ShortAnswer","condition":"equals","value":"Test"}])
-
-#### Payload
-
-```json
-[
-  {
-    "id": "shortAnswer",
-    "condition": "equals",
-    "value": "Test"
-  },
-  {
-    "id": "DatePicker",
-    "condition": "greater_than",
-    "value": "2024-02-29"
-  }
-]
-```
-
-[Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"ShortAnswer","condition":"equals","value":"Test"},{"id":"DatePicker","condition":"greater_than","value":"2024-01-01"}])
-
-### Two Filters; Three Results
-
-[3for2 Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"ShortAnswer","condition":"equals","value":"Test"}])
-
-#### Payload
+### [Two Filters; Three Results](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"DatePicker","condition":"less_than","value":"2024-03-01"},{"id":"DatePicker","condition":"greater_than","value":"2024-01-01"}])
 
 ```json
 [
@@ -105,4 +72,24 @@ curl http://localhost:3000/cLZojxk94ous/filteredResponses?filters=%5B%7B%22id%22
 ]
 ```
 
-[Live Demo Link](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"DatePicker","condition":"less_than","value":"2024-03-01"},{"id":"DatePicker","condition":"greater_than","value":"2024-01-01"}])
+### [Three Filters; Two Results](https://fillout-mvoh.onrender.com/cLZojxk94ous/filteredResponses?filters=[{"id":"DatePicker","condition":"less_than","value":"2024-03-01"},{"id":"DatePicker","condition":"greater_than","value":"2024-01-01"},{"id":"EmailInput","condition":"does_not_equal","value":"tom@fillout.com"}])
+
+```json
+[
+  {
+    "id": "DatePicker",
+    "condition": "less_than",
+    "value": "2024-03-01"
+  },
+  {
+    "id": "DatePicker",
+    "condition": "greater_than",
+    "value": "2024-01-01"
+  },
+  {
+    "id": "EmailInput",
+    "condition": "does_not_equal",
+    "value": "tom@fillout.com"
+  }
+]
+```
