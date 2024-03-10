@@ -46,7 +46,7 @@ const filterResponses = (submissions: Submissions, query: any) => {
     return submissions
   }
 
-  if (!query || Object.keys(query.length <= 0)) return noQuery()
+  if (!query || !query.filters) return noQuery()
 
   try {
     const parsedFilters = JSON.parse(query.filters) as ResponseFilters
