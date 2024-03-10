@@ -16,7 +16,7 @@ app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
   const formId = req.params.formId
   const query = req.query
   if (!isProd) {
-    const filteredResponses = filterResponses(demoData.responses as Submissions, query)
+    const filteredResponses = filterResponses(demoData.responses, query)
     return res.json({
       responses: filteredResponses,
       totalResponses: filteredResponses.length,
