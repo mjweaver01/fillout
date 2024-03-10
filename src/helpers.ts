@@ -72,6 +72,7 @@ export const filterResponses = (submissions: Submissions, query: any) => {
           // some() to check if any question matches a filter within a submission
           return submission.questions.some((question) => {
             return (
+              // wanted to account for both KVs here
               (filter.id === question.id || filter.id === question.type) &&
               compareValues(question.value, filter.condition, filter.value)
             )
