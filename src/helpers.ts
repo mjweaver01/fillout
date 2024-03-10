@@ -1,4 +1,4 @@
-import { appName } from './constants'
+import { APP_NAME } from './constants'
 import chalk from 'chalk'
 
 export const isDate = (date: string | number) => {
@@ -40,14 +40,14 @@ export const filterResponses = (submissions: Submissions, query: any) => {
   const returnAll = (isError = false) => {
     if (isError) {
       console.log(
-        appName + chalk.red(`🚨 Something went wrong while filtering! Check the error above 👆`),
+        APP_NAME + chalk.red(`🚨 Something went wrong while filtering! Check the error above 👆`),
       )
     } else {
-      console.log(appName + chalk.magenta('🙅 No filters!'))
+      console.log(APP_NAME + chalk.magenta('🙅 No filters!'))
     }
 
     console.log(
-      appName +
+      APP_NAME +
         chalk.magenta(
           `🪃  Returning all ${submissions.length} record${submissions.length != 1 ? 's' : ''}`,
         ),
@@ -60,17 +60,17 @@ export const filterResponses = (submissions: Submissions, query: any) => {
   try {
     const parsedFilters = JSON.parse(query.filters) as ResponseFilters
     console.log(
-      appName +
+      APP_NAME +
         chalk.blue(
           `🧐 Filtering ${submissions.length} record${submissions.length != 1 ? 's' : ''} based on ${parsedFilters.length} filter${parsedFilters.length != 1 ? 's' : ''} `,
         ),
     )
-    if (parsedFilters.length > 0 && Array.isArray(parsedFilters)) {
-      let filteredSubmissions = submissions
+    if (Array.isArray(parsedFilters) && parsedFilters.length > 0) {
+      const filteredSubmissions = submissions
         .map((submission) => {
-          let matchedFilters = parsedFilters
+          const matchedFilters = parsedFilters
             .map((filter) => {
-              let matchedQuestions = submission.questions
+              const matchedQuestions = submission.questions
                 .map((question) => {
                   if (filter.id === question.id || filter.id === question.type) {
                     if (compareValues(question.value, filter.condition, filter.value)) {
@@ -91,7 +91,7 @@ export const filterResponses = (submissions: Submissions, query: any) => {
         .filter((s) => s)
 
       console.log(
-        appName +
+        APP_NAME +
           chalk.magenta(
             `✅ Filtered down to ${filteredSubmissions.length} record${filteredSubmissions.length != 1 ? 's' : ''}`,
           ),

@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import chalk from 'chalk'
-import { demoData, API_KEY, isProd, appName, port } from './constants'
+import { DEMO_DATA, API_KEY, IS_PROD, APP_NAME, PORT } from './constants'
 import { filterResponses } from './helpers'
 
 const app = express()
@@ -15,8 +15,8 @@ app.get('/ping', (req: Request, res: Response) => {
 app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
   const formId = req.params.formId
   const query = req.query
-  if (!isProd) {
-    const filteredResponses = filterResponses(demoData.responses, query)
+  if (!IS_PROD) {
+    const filteredResponses = filterResponses(DEMO_DATA.responses, query)
     return res.json({
       responses: filteredResponses,
       totalResponses: filteredResponses.length,
@@ -42,12 +42,12 @@ app.get('/:formId/filteredResponses', (req: Request, res: Response) => {
     })
 })
 
-app.listen(port, () => {
+app.listen(PORT, () => {
   if (API_KEY) {
-    console.log(appName + chalk.yellow('🔑 API key present'))
+    console.log(APP_NAME + chalk.yellow('🔑 API key present'))
   } else {
     console.log(chalk.red('🛑 please provide required .env data'))
   }
 
-  console.log(appName + chalk.green(`👂 listening http://localhost:${port}`))
+  console.log(APP_NAME + chalk.green(`👂 listening http://localhost:${PORT}`))
 })

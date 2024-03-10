@@ -2,11 +2,14 @@ import chalk from 'chalk'
 import * as dotenv from 'dotenv'
 import data from './_demo_data.json'
 
-export const demoData: FilteredSubmissionsResponse = JSON.parse(JSON.stringify(data))
-
 dotenv.config()
 
-export const appName = chalk.hex('#ec4899')('[fillout] ')
+export const DEMO_DATA: FilteredSubmissionsResponse = JSON.parse(JSON.stringify(data))
+
 export const { NODE_ENV, API_KEY } = process.env
-export const isProd = NODE_ENV === 'production'
-export const port = isProd ? 80 : 3000
+
+export const APP_NAME = chalk.hex('#ec4899')('[fillout] ')
+
+export const IS_PROD = NODE_ENV === 'production'
+
+export const PORT = IS_PROD ? 80 : 3000
