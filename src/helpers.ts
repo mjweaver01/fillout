@@ -41,6 +41,10 @@ export const compareValues = (
   }
 }
 
+// BUSINESS LOGIC
+// for each submission,
+// each filter must have:
+// at least one corresponding question
 export const filterResponses = (submissions: Submissions, query: any) => {
   const returnAll = (isError = false) => {
     console.log(
