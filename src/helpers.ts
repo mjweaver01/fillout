@@ -3,7 +3,7 @@ import chalk from 'chalk'
 
 export const isDate = (date: string) => {
   return (
-    (new Date(date) as unknown as DateCompare) !== 'Invalid Date' &&
+    (new Date(date) as unknown as string) !== 'Invalid Date' &&
     !isNaN(new Date(date) as unknown as number)
   )
 }
@@ -12,26 +12,11 @@ export const isNumeric = (value: string) => {
   return /^-?\d+$/.test(value)
 }
 
-export const compareValues = (
-  left: string | number,
-  comparison: Condition,
-  right: string | number,
-) => {
+export const compareValues = (left: string, comparison: Condition, right: string) => {
   if (!left || !comparison || !right) return false
 
-  const leftString = left.toString()
-  const rightString = right.toString()
-
-  const l = isDate(leftString)
-    ? new Date(leftString).getTime()
-    : isNumeric(leftString)
-      ? parseInt(leftString)
-      : left
-  const r = isDate(rightString)
-    ? new Date(right).getTime()
-    : isNumeric(rightString)
-      ? parseInt(rightString)
-      : right
+  const l = isDate(left) ? new Date(left).getTime() : isNumeric(left) ? parseInt(left) : left
+  const r = isDate(right) ? new Date(right).getTime() : isNumeric(right) ? parseInt(right) : right
 
   switch (comparison) {
     case 'equals':
@@ -90,7 +75,8 @@ export const filterResponses = (submissions: Submissions, query: any) => {
           return (
             // wanted to check both KVs (id and type) just incase :)
             (id === question.id || id === question.type) &&
-            compareValues(question.value, condition, value)
+            // type coercion here vs above
+            compareValues(question.value.toString(), condition, value.toString())
           )
         })
       })
