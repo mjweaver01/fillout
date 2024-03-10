@@ -93,3 +93,7 @@ curl http://localhost:3000/cLZojxk94ous/filteredResponses?filters=%5B%7B%22id%22
   }
 ]
 ```
+
+## 🏌️ Notes
+
+I spent way too much time golfing on this, but it was fun! ⛳
