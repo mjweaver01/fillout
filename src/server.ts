@@ -17,7 +17,7 @@ app.get('/:formId/filteredResponses', async (req: Request, res: Response) => {
   const query = req.query
 
   try {
-    let responseData: any[]
+    let responseData: Submissions
 
     if (IS_PROD) {
       const url = `https://api.fillout.com/v1/api/forms/${formId}/submissions`

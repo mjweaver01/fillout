@@ -20,6 +20,8 @@ interface Submission {
   submissionTime: string
   lastUpdatedAt: string
   questions: Question[]
+  // don't know what these types are
+  // leaving as any
   calculations: any[]
   urlParameters: any[]
   quiz: any
@@ -41,3 +43,5 @@ type FilteredSubmissionsResponse = {
   totalResponses: number
   pageCount: number
 }
+
+type DateCompare = DateConstructor | string | number
